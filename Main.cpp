@@ -14,8 +14,7 @@ using namespace std;
 class Peliculas
 {
 public:
-    int Menu_Lista;
-    char Pelicula_Nombre[10]; //ARREGLOS UNIDIMENSIONALES
+    char Pelicula_Nombre[10], Menu_Lista[10]; //ARREGLOS UNIDIMENSIONALES
     void Agregar(); //METODOS
     void Imprimir();
     void Buscar();
@@ -34,7 +33,7 @@ void Peliculas::Agregar() // DE LA CLASE ALUMNO PERTENECE CAPTURAR ESO SIGNIFICA
 
 
     cout<<"¿En que lista deceas agregar la pelicula?: ";
-    cin >> Menu_Lista;
+    cin.getline(Menu_Lista, 10);
 
     ofstream Archivo("Peliculas.txt",ios::app); // ofstream crea un objeto para escritura en el archivo llamado "Archivo", ios::app = entrada y salida de datos
     Archivo<<Pelicula_Nombre<<'|'<<Menu_Lista<<'|'; // se escribiendo en el archivo creado campo por campo separado por el delimitador '|'
@@ -70,7 +69,7 @@ void Peliculas::Imprimir()
             i=0;
             do
             {
-                Lectura.read((int *)&Menu_Lista[i],1);
+                Lectura.read((char *)&Menu_Lista[i],1);
                 if(Lectura.eof())
                     break;
                 i++;
@@ -83,7 +82,7 @@ void Peliculas::Imprimir()
                 break;
 
             //Imprimes valores
-            cout<<endl<<"\nNombre de la pelicula: "<<Pelicula_Nombre<<endl<<"\nDescripcion: "<<descripcion<<endl<<endl<<"\n"; // endl=salto de linea
+            cout<<endl<<"\nNombre de la pelicula: "<<Pelicula_Nombre<<endl<<endl<<"\n"; // endl=salto de linea
             if(Lectura.eof())
                 break;
         }
@@ -111,10 +110,7 @@ int main(){
             case 4: p.Modificar();
                 break;
 
-            case 5: p.Modificar();
-                break;
-
-            case 6: p.Eliminar();
+            case 5: p.Eliminar();
             break;
         }
 
