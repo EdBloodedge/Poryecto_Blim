@@ -1,1 +1,1 @@
-lista;desc;cat|a;b;c|
+a;b;c|x;y;z|r;s;t|
