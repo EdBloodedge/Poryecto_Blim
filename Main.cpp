@@ -129,9 +129,9 @@ void ModificarListas(){
               k  = fgetc(fd);  //solo para que avance el archivo hasta la proxima lista
             }
 
-            while(!feof(fd)){  //copia todo lo que esta despues de la lista a modificar en el temporal
+            while(!feof(fd)){
+              fputc(k, fd2);  //copia todo lo que esta despues de la lista a modificar en el temporal
               k = fgetc(fd);
-              fputc(k, fd2);
             }
 
             fsetpos(fd, &posLista);
