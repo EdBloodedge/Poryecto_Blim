@@ -193,6 +193,89 @@ void ModificarListas(){
 
 }
 
+void EliminarListas(){
+
+	char k, nom[30], nombreLista[50];
+	int x=0;
+
+	if ((fd1=fopen("rlv.txt","r+"))==NULL){return;}
+	if ((fd2=fopen("tmp.txt","w+"))==NULL){return;}
+
+	fgetpos(fd1, &posLista);
+
+	fflush(stdin);
+	cout<<"Introduce el nombre de la lista: ";gets(nom);
+
+	while(!feof(fd1)){
+        k=fgetc(fd1);
+
+        if(k==';'){
+
+          nombreLista[x]='\0';
+
+        	if(strcmp(nom,nombreLista) == 0){
+
+            fseek(fd1, 0, SEEK_SET);
+            fgetpos(fd1, &posActual);
+            while(posActual != posLista){
+
+              k = fgetc(fd1);
+              fputc(k, fd2);
+              fgetpos(fd1, &posActual);
+            }
+
+            k = getc(fd1);
+
+            while (k != '|') {
+              k  = fgetc(fd1);  //solo para que avance el archivo hasta la proxima lista
+            }
+
+            k = fgetc(fd1);
+
+            while(!feof(fd1)){
+              fputc(k, fd2);  //copia todo lo que esta despues de la lista a modificar en el temporal
+              k = fgetc(fd1);
+            }
+
+            fclose(fd1);
+            fclose(fd2);
+
+            int result;
+
+            remove("rlv.txt");
+
+            result= rename( "tmp.txt" , "rlv.txt" );
+            if ( result == 0 )
+              puts ( "Lista eliminada." );
+            else
+              perror( "Error modificando la lista." );
+
+          return;
+
+          }else{
+            while (k != '|') {
+              k  = fgetc(fd1);
+            }
+            fgetpos(fd1, &posLista); //tomamos la posicion de la siguiente lista
+            k = fgetc(fd1); //para que quite el '|' de k y no entre en nombreaLista
+            x=0; //para que vuelva a tomar el nombre de la lista para comparar
+
+
+          }
+
+
+
+        }
+
+    nombreLista[x++]=k;
+
+  }
+
+  fclose(fd1);
+  fclose(fd2);
+
+}
+
 
 int main()
 {
@@ -206,7 +289,8 @@ int main()
         cout<<"\n2. Imprimir listas";
         cout<<"\n3. Buscar lista";
         cout<<"\n4. Modificar Listas";
-        cout<<"\n5. Salir";
+        cout<<"\n5. Eliminar Listas";
+        cout<<"\n6. Salir";
         cout<<"\nOpcion: ";
         cin>>opc;
         cout<<"\n\n ";
@@ -222,9 +306,11 @@ int main()
             case 3: {BuscarLista();break;}
 
             case 4:{ModificarListas();break;}
+
+            case 5:{EliminarListas();break;}
         }
 
-    }while(opc!=5);
+    }while(opc!=6);
 
     system("pause");
     return 0;
