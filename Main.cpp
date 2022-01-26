@@ -8,10 +8,10 @@
 using namespace std;
 
 FILE *fd;
-FILE *fd1;
 FILE *fd2;
 
-
+fpos_t posInicial;
+fpos_t posLista;
 
 void CrearLista(){
     char nombreLista[50],descripcionLista[500],CategoriaLista[50],rpt;
@@ -52,7 +52,7 @@ if ((fd=fopen("rlv.txt","rt"))==NULL){
     while(!feof(fd)){
         k = fgetc(fd);
         if (k==';'){
-            cout<<" ";//continue; //(es para que no se vea el ;)
+            cout<<" ";continue; //(es para que no se vea el ;)
         }
         if (k=='|'){
             cout<<"\n";continue;//(es para que no se vea el |)
@@ -99,45 +99,104 @@ fclose(fd);
 }
 
 
-/*
+
 void ModificarListas(){
 
-------------------ESTA PARTE DE MODIFICAR NO JALA AUN :( POR ESO LO COMENTE----------------
+//------------------ESTA PARTE DE MODIFICAR NO JALA AUN :( POR ESO LO COMENTE----------------
 
-char k, nom[30],nombreLista[50],descripcionLista[500],CategoriaLista[50];
-int c=0,x=0,y=0,z=0;
+	char k, nom[30],nombreLista[50],descripcionLista[500],CategoriaLista[50];
+	int x=0;
 
-if ((fd1=fopen("rlv.txt","rt"))==NULL){return;}
-if ((fd2=fopen("tmp.txt","wt"))==NULL){return;}
+	if ((fd=fopen("rlv.txt","rt"))==NULL){return;}
+	if ((fd2=fopen("tmp.txt","wt"))==NULL){return;}
 
-fflush(stdin);
-cout<<"Introduce el nombre de la lista: ";gets(nom);
-while(!feof(fd1)){
+	fgetpos(fd, &posLista);
+  fgetpos(fd2, &posInicial);
 
-    k=fgetc(fd1);
-    if(k==';'){c++;nombreLista[x]='0';descripcionLista[y]='\0';continue;}
-    if(k=='|'){CategoriaLista[z]='\0';
-    if (strcmp(nom,nombreLista)==0){
-            cout<<"Introduzca la nueva categoria: ";gets(CategoriaLista);}
-    fwrite(nombreLista,1,strlen(nombreLista),fd2);
+	fflush(stdin);
+	cout<<"Introduce el nombre de la lista: ";gets(nom);
 
-   fwrite(Delimc,1,1,fd2);
-   fwrite(descripcionLista,1,strlen(descripcionLista),fd2);
-   fwrite(Delimc,1,1,fd2);
-   fwrite(CategoriaLista,1,strlen(CategoriaLista),fd2);
-   fwrite(DelimR,1,1,fd2);continue;
+	while(!feof(fd)){
+        k=fgetc(fd);
+
+        if(k==';'){
+
+          nombreLista[x]='\0';
+
+        	if(strcmp(nom,nombreLista) == 0){
+
+            while (k != '|') {
+              k  = fgetc(fd);  //solo para que avance el archivo hasta la proxima lista
+            }
+
+            while(!feof(fd)){  //copia todo lo que esta despues de la lista a modificar en el temporal
+              k = fgetc(fd);
+              fputc(k, fd2);
+            }
+
+            fsetpos(fd, &posLista);
+
+            cout<<"Ingresa el nuevo nombre de la lista: ";gets(nombreLista);
+
+            fputs(nombreLista, fd);
+            fputc(';', fd);
+
+            cout << endl << nombreLista;
+
+            k = fgetc(fd);
+            cout << "\n" << k << endl;
+
+            cout<<"Ingresa la nueva descripcion de la lista: ";gets(descripcionLista);
+            cout<<"Ingresa la nueva categoria a la que pertenece la lista: ";gets(CategoriaLista);
+
+
+
+            fwrite(descripcionLista,1,strlen(descripcionLista),fd);
+            fwrite(Delimc,1,1,fd);
+
+            fwrite(CategoriaLista,1,strlen(CategoriaLista),fd);
+            fwrite(DelimR,1,1,fd);
+
+            cout << "\nllega aqui";
+
+            fsetpos(fd2, &posInicial);
+
+            cout << "\ntambien aqui";
+
+            while(!feof(fd2)){ //copia el resto de las listas en el registro
+
+              k = fgetc(fd2);
+              fputc(k, fd);
+
+            }
+
+            cout << endl << "Lista modificada." << endl;
+
+          return;
+
+          }else{
+            while (k != '|') {
+              k  = fgetc(fd);
+            }
+            k = fgetc(fd); //para que quite el '|' de k y no entre en nombreaLista
+            x=0; //para que vuelva a tomar el nombre de la lista para comparar
+            fgetpos(fd, &posLista); //tomamos la posicion de la siguiente lista
+
+          }
+
+
+
+        }
+
+    nombreLista[x++]=k;
+
+  }
+
+  fclose(fd);
+  fclose(fd2);
+
 }
-    if(c==0){nombreLista[x++]=k;}
-    if(c==1){descripcionLista[y++]=k;}
-    if(c==2){CategoriaLista[z++]=k;}
-}
-fclose(fd1);
-fclose(fd2);
 
-system("del rlv.txt");system("move tmp.txt rlv.txt");
-
-}
-*/
 
 int main()
 {
@@ -150,8 +209,8 @@ int main()
         cout<<"\n1. Crear lista de peliculas";
         cout<<"\n2. Imprimir listas";
         cout<<"\n3. Buscar lista";
-        //cout<<"\n4. Modificar Listas";
-        cout<<"\n4. Salir";
+        cout<<"\n4. Modificar Listas";
+        cout<<"\n5. Salir";
         cout<<"\nOpcion: ";
         cin>>opc;
         cout<<"\n\n ";
@@ -166,13 +225,11 @@ int main()
 
             case 3: {BuscarLista();break;}
 
-            //case 4:{ModificarListas();break;}
+            case 4:{ModificarListas();break;}
         }
 
-    }while(opc!=4);
+    }while(opc!=5);
 
     system("pause");
     return 0;
 }
-
-
