@@ -8,6 +8,7 @@
 using namespace std;
 
 FILE *fd;
+FILE *fd1;
 FILE *fd2;
 
 fpos_t posInicial;
@@ -107,17 +108,16 @@ void ModificarListas(){
 	char k, nom[30],nombreLista[50],descripcionLista[500],CategoriaLista[50];
 	int x=0;
 
-	if ((fd=fopen("rlv.txt","rt"))==NULL){return;}
-	if ((fd2=fopen("tmp.txt","wt"))==NULL){return;}
+	if ((fd1=fopen("rlv.txt","r+"))==NULL){return;}
+	if ((fd2=fopen("tmp.txt","w+"))==NULL){return;}
 
-	fgetpos(fd, &posLista);
-  fgetpos(fd2, &posInicial);
+	fgetpos(fd1, &posLista);
 
 	fflush(stdin);
 	cout<<"Introduce el nombre de la lista: ";gets(nom);
 
-	while(!feof(fd)){
-        k=fgetc(fd);
+	while(!feof(fd1)){
+        k=fgetc(fd1);
 
         if(k==';'){
 
@@ -126,47 +126,40 @@ void ModificarListas(){
         	if(strcmp(nom,nombreLista) == 0){
 
             while (k != '|') {
-              k  = fgetc(fd);  //solo para que avance el archivo hasta la proxima lista
+              k  = fgetc(fd1);  //solo para que avance el archivo hasta la proxima lista
             }
 
-            while(!feof(fd)){
+            while(!feof(fd1)){
               fputc(k, fd2);  //copia todo lo que esta despues de la lista a modificar en el temporal
-              k = fgetc(fd);
+              k = fgetc(fd1);
             }
 
-            fsetpos(fd, &posLista);
+            fseek(fd1, 1, SEEK_SET);
 
             cout<<"Ingresa el nuevo nombre de la lista: ";gets(nombreLista);
 
-            fputs(nombreLista, fd);
-            fputc(';', fd);
-
-            cout << endl << nombreLista;
-
-            k = fgetc(fd);
-            cout << "\n" << k << endl;
+            fputs(nombreLista, fd1);
+            fputc(';', fd1);
 
             cout<<"Ingresa la nueva descripcion de la lista: ";gets(descripcionLista);
             cout<<"Ingresa la nueva categoria a la que pertenece la lista: ";gets(CategoriaLista);
 
 
 
-            fwrite(descripcionLista,1,strlen(descripcionLista),fd);
-            fwrite(Delimc,1,1,fd);
+            fwrite(descripcionLista,1,strlen(descripcionLista),fd1);
+            fwrite(Delimc,1,1,fd1);
 
-            fwrite(CategoriaLista,1,strlen(CategoriaLista),fd);
-            fwrite(DelimR,1,1,fd);
-
-            cout << "\nllega aqui";
+            fwrite(CategoriaLista,1,strlen(CategoriaLista),fd1);
+            fwrite(DelimR,1,1,fd1);
 
             fsetpos(fd2, &posInicial);
 
-            cout << "\ntambien aqui";
+            k = fgetc(fd2);
 
             while(!feof(fd2)){ //copia el resto de las listas en el registro
 
+              fputc(k, fd1);
               k = fgetc(fd2);
-              fputc(k, fd);
 
             }
 
@@ -176,11 +169,11 @@ void ModificarListas(){
 
           }else{
             while (k != '|') {
-              k  = fgetc(fd);
+              k  = fgetc(fd1);
             }
-            k = fgetc(fd); //para que quite el '|' de k y no entre en nombreaLista
+            k = fgetc(fd1); //para que quite el '|' de k y no entre en nombreaLista
             x=0; //para que vuelva a tomar el nombre de la lista para comparar
-            fgetpos(fd, &posLista); //tomamos la posicion de la siguiente lista
+            fgetpos(fd1, &posLista); //tomamos la posicion de la siguiente lista
 
           }
 
@@ -192,7 +185,7 @@ void ModificarListas(){
 
   }
 
-  fclose(fd);
+  fclose(fd1);
   fclose(fd2);
 
 }

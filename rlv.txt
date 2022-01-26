@@ -1,1 +1,1 @@
-Lista;desc;cat|Hola;como;estas|Esta;esuna;lista|
+lista;desc;cat|a;b;c|
