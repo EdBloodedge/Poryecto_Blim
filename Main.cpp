@@ -2,21 +2,21 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#define Delimc ";"
-#define DelimR "|"
+#define Delimc ";"//Delimitador de campo
+#define DelimR "|"//Delimitador de registro
 
 using namespace std;
 
-FILE *fd;
+FILE *fd;//Se crea el archivo con el puntero fd
 FILE *fd1;
 FILE *fd2;
 
-fpos_t posActual;
+fpos_t posActual; //Ver posicion en el archivo, tipos de archivo
 fpos_t posLista;
 
-void CrearLista(){
+void CrearLista(){//funcion crear lista
     char nombreLista[50],descripcionLista[500],CategoriaLista[50],rpt;
-    if ((fd=fopen("rlv.txt","a+"))==NULL){
+    if ((fd=fopen("rlv.txt","a+"))==NULL){//Si no se puede escribir texto
         cout<<"No se puede crear la lista";return;}
 
     do{
@@ -27,6 +27,8 @@ void CrearLista(){
         cout<<"Ingresa la categoria a la que pertenece la lista: ";gets(CategoriaLista);
 
         fwrite(nombreLista,1,strlen(nombreLista),fd);
+        //nombre, cuantos nombres, tamaño de longitud y en donde se guarda.
+
         fwrite(Delimc,1,1,fd);
 
         fwrite(descripcionLista,1,strlen(descripcionLista),fd);
@@ -47,16 +49,16 @@ void CrearLista(){
 void ImprimirLista(){
 char k;//almacena cada elemento de nuestra lista
 
-if ((fd=fopen("rlv.txt","rt"))==NULL){
+if ((fd=fopen("rlv.txt","rt"))==NULL){//leer archivo
         return;}
 
     while(!feof(fd)){
         k = fgetc(fd);
         if (k==';'){
-            cout<<" ";continue; //(es para que no se vea el ;)
+            cout<<"\n";continue; //(es para que no se vea el ;)
         }
         if (k=='|'){
-            cout<<"\n";continue;//(es para que no se vea el |)
+            cout<<"\n\n\n";continue;//(es para que no se vea el |)
         }
         cout<<k;
     }
@@ -64,16 +66,16 @@ if ((fd=fopen("rlv.txt","rt"))==NULL){
 }
 
 void BuscarLista(){
-    char k,nom[20],nombreLista[50],descripcionLista[500],CategoriaLista[50];
+    char k,nom[50],nombreLista[50],descripcionLista[500],CategoriaLista[50];
     int c=0,x=0,y=0,z=0;
-    if((fd=fopen("rlv.txt","rt"))==NULL){
+    if((fd=fopen("rlv.txt","rt"))==NULL){//si no se puede crear el archivo retorna
         return;}
 
     fflush(stdin);
     cout <<"\n\n\t\t\t---------------------BUSCAR LISTA---------------------";
     cout<<"\n\nIntroduce el nombre de la lista que deseas buscar: ";gets(nom);
 
-    while(!feof(fd)){
+    while(!feof(fd)){//mientras que no llegue al final el archivo
         k=fgetc(fd);
         if (k==';'){c++;nombreLista[x]='\0';descripcionLista[y]='\0';continue;}
         if (k=='|'){CategoriaLista[z]='\0';
@@ -101,7 +103,7 @@ fclose(fd);
 
 void ModificarListas(){
 
-	char k, nom[30],nombreLista[50],descripcionLista[500],CategoriaLista[50];
+	char k, nom[50],nombreLista[50],descripcionLista[500],CategoriaLista[50];
 	int x=0;
 
 	if ((fd1=fopen("rlv.txt","r+"))==NULL){return;}
@@ -195,7 +197,7 @@ void ModificarListas(){
 
 void EliminarListas(){
 
-	char k, nom[30], nombreLista[50];
+	char k, nom[50], nombreLista[50];
 	int x=0;
 
 	if ((fd1=fopen("rlv.txt","r+"))==NULL){return;}
