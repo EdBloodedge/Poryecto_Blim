@@ -21,7 +21,7 @@ void CrearLista(){
 
     do{
         fflush(stdin);
-        cout<<"\n\nCREAR LISTA\n\n";
+        cout<<"\n\n\t\t\t-----------------------CREAR LISTA------------------------------\n\n";
         cout<<"Ingresa el nombre de la lista: ";gets(nombreLista);
         cout<<"Ingresa la descripcion de la lista: ";gets(descripcionLista);
         cout<<"Ingresa la categoria a la que pertenece la lista: ";gets(CategoriaLista);
@@ -300,14 +300,18 @@ int main()
             case 1: {CrearLista();break;}
 
             case 2: {
-            cout<<"\n\t\t\t------------------------IMPRIMIR LISTAS---------------------\n\n";
+            cout<<"\n\t\t\t------------------------IMPRIMIR LISTAS-----------------------\n\n";
                     ImprimirLista();break;}
 
             case 3: {BuscarLista();break;}
 
-            case 4:{ModificarListas();break;}
+            case 4:{
+            cout<<"\n\t\t\t------------------------MODIFICAR LISTA-----------------------\n\n";
+                ModificarListas();break;}
 
-            case 5:{EliminarListas();break;}
+            case 5:{
+            cout<<"\n\t\t\t------------------------ELIMINAR LISTA-----------------------\n\n";
+                EliminarListas();break;}
         }
 
     }while(opc!=6);
