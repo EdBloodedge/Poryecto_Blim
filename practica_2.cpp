@@ -152,7 +152,7 @@ int main(){
                   cout<<"\n\t\t\t------------------------BUSCAR-----------------------\n\n";
                   cout << "Ingrese el nombre: ";
                   fflush(stdin);
-                  cin >> nombre;
+                  getline(cin,nombre);
                   lista->Buscar(nombre);
                   break;
 
@@ -160,7 +160,7 @@ int main(){
                   cout<<"\n\t\t\t------------------------MODIFICAR-----------------------\n\n";
                   cout << "Ingrese el nombre: ";
                   fflush(stdin);
-                  cin >> nombre;
+                  getline(cin,nombre);
                   lista->Modificar(nombre);
                   break;
 
@@ -168,7 +168,7 @@ int main(){
                   cout<<"\n\t\t\t------------------------ELIMINAR-----------------------\n\n";
                   cout << "Ingrese el nombre: ";
                   fflush(stdin);
-                  cin >> nombre;
+                  getline(cin,nombre);
                   lista->Eliminar(nombre);
                   break;
 
@@ -264,13 +264,13 @@ void Nodo::Modificar(string nombre){
 
     cout << "\nIngrese los datos actualizados:\nNombre: ";
     fflush(stdin);
-    cin >> nNombre;
+    getline(cin,nNombre);
     cout << "\nDescripcion: ";
     fflush(stdin);
-    cin >> nDescripcion;
+    getline(cin,nDescripcion);
     cout << "\nCategoria: ";
     fflush(stdin);
-    cin >> nCategoria;
+    getline(cin,nCategoria);
 
     this->pSig->Set(nNombre, nDescripcion, nCategoria);
 
@@ -332,13 +332,13 @@ void Lista::Agregar(){
 
   cout << "Ingrese los datos.\nNombre: ";
   fflush(stdin);
-  cin >> nombre;
+  getline(cin,nombre);
   cout << "\nDescripcion: ";
   fflush(stdin);
-  cin >> descripcion;
+  getline(cin,descripcion);
   cout << "\nCategoria: ";
   fflush(stdin);
-  cin >> categoria;
+  getline(cin,categoria);
 
   Inicio.Agregar(nombre, descripcion, categoria);
 
