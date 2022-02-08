@@ -463,12 +463,25 @@ void Lista::GuardarSeries(){
     pDescripcion = descripcion.c_str();
     pCategoria = categoria.c_str();
 
-    fputs(pNombre, f);
-    fputc('|', f);
-    fputs(pDescripcion, f);
-    fputc('|', f);
-    fputs(pCategoria, f);
-    fputc('*', f);
+
+
+    ofstream temporal("temporal.txt",ios::app);
+
+    dim1 = strlen(pNombre);
+    dim2 = strlen(pDescripcion);
+    dim3 = strlen(pCategoria);
+
+
+    temporal.write((string*)&dim1,sizeof(int));
+    temporal.write((string*)&pNombre,dim1);
+
+    temporal.write((string*)&dim2,sizeof(int));
+    temporal.write((string*)&pDescripcion,dim2);
+
+    temporal.write((string*)&dim3,sizeof(int));
+    temporal.write((string*)&pCategoria,dim3);
+
+
 
     aux = aux->pSig;
 
@@ -574,4 +587,3 @@ Lista::~Lista(){
   }
 
 }
-
