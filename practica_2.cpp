@@ -353,7 +353,6 @@ void Lista::CargarPeliculas(){
   fclose(f);
   return;
 }
-
 void Lista::CargarSeries(){
 
   FILE* f;
@@ -364,8 +363,8 @@ void Lista::CargarSeries(){
   }
 
   char c;
+  int tam;
   string nombre, descripcion, categoria;
-  int atr = 0;
 
   c = fgetc(f);
 
@@ -377,34 +376,36 @@ void Lista::CargarSeries(){
     descripcion.clear();
     categoria.clear();
 
-    while(c != '*'){
+    for(int i=0; i<3; i++){
+
       c = fgetc(f);
-      while( c != '|' && c != '*'){
+      tam = c;
 
-        if(atr == 0)
-          nombre += c;
-
-        if(atr == 1)
-          descripcion += c;
-
-        if(atr == 2)
-          categoria += c;
+      for(int j=0; j<tam; j++){
 
         c = fgetc(f);
+
+        if(i == 0)
+          nombre += c;
+
+        if(i == 1)
+          descripcion += c;
+
+        if(i == 2)
+          categoria += c;
+
       }
-      atr++;
     }
 
-    atr = 0;
     this->Inicio.Agregar(nombre, descripcion, categoria);
     c = fgetc(f);
 
   }
 
   fclose(f);
+
   return;
 }
-
 void Lista::GuardarPeliculas(){
   FILE *f;
 
@@ -441,19 +442,16 @@ void Lista::GuardarPeliculas(){
   fclose(f);
   return;
 }
-
-int dim1,dim2,dim3;
-
 void Lista::GuardarSeries(){
   FILE *f;
-
   if ((f=fopen("series.txt","w+"))==NULL){
          cout<<"Imposible abrir un archivo para guardar.";
          return;
   }
 
   Nodo* aux = &(this->Inicio);
-  string nombre, descripcion, categoria;
+  string nombre, descripcion, categoria, lNombre, lDescripcion, lCategoria;
+  char n, d, c;
   const char* pNombre, *pDescripcion, *pCategoria;
 
   while(aux->pSig != NULL){
@@ -462,59 +460,29 @@ void Lista::GuardarSeries(){
     descripcion = aux->pSig->descripcion;
     categoria = aux->pSig->categoria;
 
-    pNombre = nombre.c_str();
-    pDescripcion = descripcion.c_str();
-    pCategoria = categoria.c_str();
+    n = nombre.length();
+    d = descripcion.length();
+    c = categoria.length();
 
+    lNombre = n + nombre;
+    lDescripcion = d + descripcion;
+    lCategoria = c + categoria;
 
+    pNombre = lNombre.c_str();
+    pDescripcion = lDescripcion.c_str();
+    pCategoria = lCategoria.c_str();
 
-
-
-    ofstream series("series.txt",ios::app);
-    if (!series)
-    {
-    cout << "Error al abrir ejemplo\n";
-    exit(EXIT_FAILURE);
-    }
-
-    char c;//almacena cada elemento de nuestra lista
-
-    c = fgetc(f);
-
-
-
-if ((f=fopen("rlv.txt","rt"))==NULL){//leer archivo
-        return;}
-
-    while(!feof(f)){
-
-
-
-    dim1 = strlen(pNombre);
-    dim2 = strlen(pDescripcion);
-    dim3 = strlen(pCategoria);
-
-
-    f.write((string*)&dim1,sizeof(int));
-    f.write((string*)&pNombre,dim1);
-
-    f.write((string*)&dim2,sizeof(int));
-    f.write((string*)&pDescripcion,dim2);
-
-    f.write((string*)&dim3,sizeof(int));
-    f.write((string*)&pCategoria,dim3);
-
-
+    fputs(pNombre, f);
+    fputs(pDescripcion, f);
+    fputs(pCategoria, f);
 
     aux = aux->pSig;
 
-  }
   }
 
   fclose(f);
   return;
 }
-
 
 bool Lista::IsEmpty(){
 
