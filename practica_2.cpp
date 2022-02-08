@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
-FILE *fd;//Se crea el archivo con el puntero fd
+#include <fstream>  // Para ofstream
 
 using namespace std;
 
@@ -441,6 +441,7 @@ void Lista::GuardarPeliculas(){
   return;
 }
 
+int dim1,dim2,dim3;
 
 void Lista::GuardarSeries(){
   FILE *f;
@@ -474,6 +475,7 @@ void Lista::GuardarSeries(){
     cout << "Error al abrir ejemplo.dat\n";
     exit(EXIT_FAILURE);
     }
+
 
     dim1 = strlen(pNombre);
     dim2 = strlen(pDescripcion);
