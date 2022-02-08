@@ -351,6 +351,58 @@ void Lista::CargarPeliculas(){
   fclose(f);
   return;
 }
+
+void Lista::CargarSeries(){
+
+  FILE* f;
+
+  if ((f=fopen("series.txt","r"))==NULL){
+         cout<<"Imposible abrir un archivo para cargar.";
+         return;
+  }
+
+  char c;
+  string nombre, descripcion, categoria;
+  int atr = 0;
+
+  c = fgetc(f);
+
+  while(!feof(f)){
+
+    ungetc(c, f);
+
+    nombre.clear();
+    descripcion.clear();
+    categoria.clear();
+
+    while(c != '*'){
+      c = fgetc(f);
+      while( c != '|' && c != '*'){
+
+        if(atr == 0)
+          nombre += c;
+
+        if(atr == 1)
+          descripcion += c;
+
+        if(atr == 2)
+          categoria += c;
+
+        c = fgetc(f);
+      }
+      atr++;
+    }
+
+    atr = 0;
+    this->Inicio.Agregar(nombre, descripcion, categoria);
+    c = fgetc(f);
+
+  }
+
+  fclose(f);
+  return;
+}
+
 void Lista::GuardarPeliculas(){
   FILE *f;
 
@@ -387,14 +439,45 @@ void Lista::GuardarPeliculas(){
   fclose(f);
   return;
 }
-void Lista::CargarSeries(){
 
 
-  return;
-}
 void Lista::GuardarSeries(){
+  FILE *f;
+
+  if ((f=fopen("series.txt","w+"))==NULL){
+         cout<<"Imposible abrir un archivo para guardar.";
+         return;
+  }
+
+  Nodo* aux = &(this->Inicio);
+  string nombre, descripcion, categoria;
+  const char* pNombre, *pDescripcion, *pCategoria;
+
+  while(aux->pSig != NULL){
+
+    nombre = aux->pSig->nombre;
+    descripcion = aux->pSig->descripcion;
+    categoria = aux->pSig->categoria;
+
+    pNombre = nombre.c_str();
+    pDescripcion = descripcion.c_str();
+    pCategoria = categoria.c_str();
+
+    fputs(pNombre, f);
+    fputc('|', f);
+    fputs(pDescripcion, f);
+    fputc('|', f);
+    fputs(pCategoria, f);
+    fputc('*', f);
+
+    aux = aux->pSig;
+
+  }
+
+  fclose(f);
   return;
 }
+
 
 bool Lista::IsEmpty(){
 
@@ -491,3 +574,4 @@ Lista::~Lista(){
   }
 
 }
+
