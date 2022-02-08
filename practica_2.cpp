@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstring>
+FILE *fd;//Se crea el archivo con el puntero fd
 
 using namespace std;
 
@@ -465,21 +466,28 @@ void Lista::GuardarSeries(){
 
 
 
-    ofstream temporal("temporal.txt",ios::app);
+
+
+    ofstream series("series.txt",ios::app);
+    if (!series)
+    {
+    cout << "Error al abrir ejemplo.dat\n";
+    exit(EXIT_FAILURE);
+    }
 
     dim1 = strlen(pNombre);
     dim2 = strlen(pDescripcion);
     dim3 = strlen(pCategoria);
 
 
-    temporal.write((string*)&dim1,sizeof(int));
-    temporal.write((string*)&pNombre,dim1);
+    series.write((string*)&dim1,sizeof(int));
+    series.write((string*)&pNombre,dim1);
 
-    temporal.write((string*)&dim2,sizeof(int));
-    temporal.write((string*)&pDescripcion,dim2);
+    series.write((string*)&dim2,sizeof(int));
+    series.write((string*)&pDescripcion,dim2);
 
-    temporal.write((string*)&dim3,sizeof(int));
-    temporal.write((string*)&pCategoria,dim3);
+    series.write((string*)&dim3,sizeof(int));
+    series.write((string*)&pCategoria,dim3);
 
 
 
