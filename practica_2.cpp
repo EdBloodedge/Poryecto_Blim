@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <cstring>
 #include <fstream>  // Para ofstream
-FILE *fd;//Se crea el archivo con el puntero fd
+
 
 using namespace std;
 
@@ -487,7 +487,7 @@ if ((f=fopen("rlv.txt","rt"))==NULL){//leer archivo
         return;}
 
     while(!feof(f)){
-        c = fgetc(f);
+
 
 
     dim1 = strlen(pNombre);
@@ -495,14 +495,14 @@ if ((f=fopen("rlv.txt","rt"))==NULL){//leer archivo
     dim3 = strlen(pCategoria);
 
 
-    series.write((string*)&dim1,sizeof(int));
-    series.write((string*)&pNombre,dim1);
+    f.write((string*)&dim1,sizeof(int));
+    f.write((string*)&pNombre,dim1);
 
-    series.write((string*)&dim2,sizeof(int));
-    series.write((string*)&pDescripcion,dim2);
+    f.write((string*)&dim2,sizeof(int));
+    f.write((string*)&pDescripcion,dim2);
 
-    series.write((string*)&dim3,sizeof(int));
-    series.write((string*)&pCategoria,dim3);
+    f.write((string*)&dim3,sizeof(int));
+    f.write((string*)&pCategoria,dim3);
 
 
 
@@ -511,7 +511,7 @@ if ((f=fopen("rlv.txt","rt"))==NULL){//leer archivo
   }
   }
 
-  fclose(fd);
+  fclose(f);
   return;
 }
 
