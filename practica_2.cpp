@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <cstring>
 #include <fstream>  // Para ofstream
+FILE *fd;//Se crea el archivo con el puntero fd
 
 using namespace std;
 
@@ -472,9 +473,21 @@ void Lista::GuardarSeries(){
     ofstream series("series.txt",ios::app);
     if (!series)
     {
-    cout << "Error al abrir ejemplo.dat\n";
+    cout << "Error al abrir ejemplo\n";
     exit(EXIT_FAILURE);
     }
+
+    char c;//almacena cada elemento de nuestra lista
+
+    c = fgetc(f);
+
+
+
+if ((f=fopen("rlv.txt","rt"))==NULL){//leer archivo
+        return;}
+
+    while(!feof(f)){
+        c = fgetc(f);
 
 
     dim1 = strlen(pNombre);
@@ -496,8 +509,9 @@ void Lista::GuardarSeries(){
     aux = aux->pSig;
 
   }
+  }
 
-  fclose(f);
+  fclose(fd);
   return;
 }
 
