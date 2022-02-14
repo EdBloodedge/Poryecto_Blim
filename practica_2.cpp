@@ -297,10 +297,6 @@ Nodo::Nodo(){
 
 }
 
-//Pelicula
-
-//Serie
-
 //Lista
 
 void Lista::CargarPeliculas(){
@@ -358,7 +354,7 @@ void Lista::CargarSeries(){
   FILE* f;
 
   if ((f=fopen("series.txt","r"))==NULL){
-         cout<<"Imposible abrir un archivo para cargar.";
+         cout<<"Imposible abrir un archivo para cargar.";  //Abre el archivo y retorna si hay un error
          return;
   }
 
@@ -368,22 +364,22 @@ void Lista::CargarSeries(){
 
   c = fgetc(f);
 
-  while(!feof(f)){
+  while(!feof(f)){   //Mientras no sea el fin del archivo...
 
     ungetc(c, f);
 
     nombre.clear();
-    descripcion.clear();
+    descripcion.clear();            //Limpia las cadenas para recibir nuevas
     categoria.clear();
 
-    for(int i=0; i<3; i++){
+    for(int i=0; i<3; i++){         //Un for para cambiar entre los tres atributos
 
-      c = fgetc(f);
+      c = fgetc(f);                 //Lee el caracter de tamano y lo interpreta como numero
       tam = c;
 
-      for(int j=0; j<tam; j++){
+      for(int j=0; j<tam; j++){      //Desde cero, hasta el tamano indicado....
 
-        c = fgetc(f);
+        c = fgetc(f);                   //Obtiene caracteres, y los va almacenando en el atributo correspondiente
 
         if(i == 0)
           nombre += c;
@@ -397,7 +393,7 @@ void Lista::CargarSeries(){
       }
     }
 
-    this->Inicio.Agregar(nombre, descripcion, categoria);
+    this->Inicio.Agregar(nombre, descripcion, categoria);  //Crea un nuevo nodo con los datos cargados
     c = fgetc(f);
 
   }
@@ -410,7 +406,7 @@ void Lista::GuardarPeliculas(){
   FILE *f;
 
   if ((f=fopen("pelis.txt","w+"))==NULL){
-         cout<<"Imposible abrir un archivo para guardar.";
+         cout<<"Imposible abrir un archivo para guardar.";  // abre un archivo y retorna si hay un error
          return;
   }
 
@@ -421,11 +417,11 @@ void Lista::GuardarPeliculas(){
   while(aux->pSig != NULL){
 
     nombre = aux->pSig->nombre;
-    descripcion = aux->pSig->descripcion;
+    descripcion = aux->pSig->descripcion;               // Copia los atributos en strings
     categoria = aux->pSig->categoria;
 
     pNombre = nombre.c_str();
-    pDescripcion = descripcion.c_str();
+    pDescripcion = descripcion.c_str();                 // Guarda los datos
     pCategoria = categoria.c_str();
 
     fputs(pNombre, f);
@@ -445,7 +441,7 @@ void Lista::GuardarPeliculas(){
 void Lista::GuardarSeries(){
   FILE *f;
   if ((f=fopen("series.txt","w+"))==NULL){
-         cout<<"Imposible abrir un archivo para guardar.";
+         cout<<"Imposible abrir un archivo para guardar.";  //Abre el archivo y retorna si hay un error
          return;
   }
 
@@ -457,26 +453,26 @@ void Lista::GuardarSeries(){
   while(aux->pSig != NULL){
 
     nombre = aux->pSig->nombre;
-    descripcion = aux->pSig->descripcion;
+    descripcion = aux->pSig->descripcion;  //Guarda los atributos en strings
     categoria = aux->pSig->categoria;
 
     n = nombre.length();
-    d = descripcion.length();
+    d = descripcion.length();              //Guarda el tamano de los strings como un caracter
     c = categoria.length();
 
     lNombre = n + nombre;
-    lDescripcion = d + descripcion;
+    lDescripcion = d + descripcion;        //Junta tamano con su respectiva cadena
     lCategoria = c + categoria;
 
     pNombre = lNombre.c_str();
-    pDescripcion = lDescripcion.c_str();
+    pDescripcion = lDescripcion.c_str();   //Convierte cada una en una cadena constante, para usar fputs
     pCategoria = lCategoria.c_str();
 
     fputs(pNombre, f);
-    fputs(pDescripcion, f);
+    fputs(pDescripcion, f);                 //Guarda los datos en el archivo
     fputs(pCategoria, f);
 
-    aux = aux->pSig;
+    aux = aux->pSig;                        //Avanza al siguiente nodo
 
   }
 
