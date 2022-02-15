@@ -9,47 +9,34 @@ using namespace std;
 
 class Nodo{
 
-friend class Lista;
-
-protected:
+public:
 
   Nodo* pSig;
   string nombre, descripcion, categoria;
 
   void Set(string nombre, string descripcion, string categoria);
 
-  void Agregar(string nombre, string descripcion, string categoria);
+  void Agregar(string nombre, string descripcion, string categoria, int modo);
   void Imprimir(int Modo);
   void Buscar(string nombre);
   void Modificar(string nombre);
   void Eliminar(string nombre);
 
+  virtual void Cargar(int pos);
+  virtual void Guardar();
+
   Nodo();
-
-};
-
-class Pelicula : public Nodo{
-
-  friend class Lista;
-
-};
-
-class Serie : public Nodo{
-
-  friend class Lista;
 
 };
 
 class Lista{
 
 private:
-  Nodo Inicio;
+  Nodo* Inicio;
   int Modo;
 
 
 public:
-  void CargarPeliculas();
-  void CargarSeries();
   void GuardarPeliculas();
   void GuardarSeries();
 
@@ -66,18 +53,36 @@ public:
 
 };
 
+class CPelicula : public Nodo{
+  friend class Lista;
+
+protected:
+  virtual void Cargar(int pos);
+  virtual void Guardar();
+
+};
+
+class CSerie : public Nodo{
+
+  friend class Lista;
+
+protected:
+  virtual void Cargar(int pos);
+
+};
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 int main(){
 
   int opc;
-  int PelSer;
+  int modo;
 
   string nombre;
   bool salir;
 
-  Lista Peliculas(0);
-  Lista Series(1);
+  Lista Peliculas(1);
+  Lista Series(2);
   Lista* lista;
 
     do{
@@ -90,12 +95,12 @@ int main(){
 
       cout<<"\nOpcion: ";
       fflush(stdin);
-      cin>>PelSer;
+      cin>>modo;
       cout<<"\n\n ";
 
       opc = 0;
 
-      switch (PelSer) {
+      switch (modo) {
         case 1:
           lista = &Peliculas;
           break;
@@ -200,15 +205,25 @@ void Nodo::Set(string nombre, string descripcion, string categoria){
 
 }
 
-void Nodo::Agregar(string nombre, string descripcion, string categoria){
+void Nodo::Agregar(string nombre, string descripcion, string categoria, int modo){
 
   if(this->pSig == NULL){
 
-    this->pSig = new Nodo;
+    switch(modo){
+
+      case 1:
+        this->pSig = new CPelicula;
+        break;
+
+      case 2:
+        this->pSig = new CSerie;
+        break;
+
+    }
     this->pSig->Set(nombre, descripcion, categoria);
 
   }else{
-    this->pSig->Agregar(nombre, descripcion, categoria);
+    this->pSig->Agregar(nombre, descripcion, categoria, modo);
   }
 
   return;
@@ -291,117 +306,148 @@ void Nodo::Eliminar(string nombre){
 
 }
 
+void Nodo::Cargar(int pos){
+
+  if(this->pSig != NULL)
+    this->pSig->Cargar(0);
+
+}
+void Nodo::Guardar(){
+
+  if(this->pSig != NULL)
+    this->pSig->Guardar();
+
+}
+
 Nodo::Nodo(){
 
   this->pSig = NULL;
 
 }
 
+//Peliculas
+
+void CPelicula::Cargar(int pos){
+
+  ifstream f("pelis.txt");
+
+  if(!f.is_open()){
+    cout<<"Imposible abrir un archivo para cargar.";
+    return;
+  }
+
+  f.seekg(pos, f.beg);
+
+  char c;
+  string nombre, descripcion, categoria;
+
+  for(int i = 0; i<3; i++){
+    f.get(c);
+    while( c != '|' && c != '*'){
+
+      switch (i) {
+        case 0:
+          nombre += c;
+          break;
+
+        case 1:
+          descripcion += c;\
+          break;
+
+        case 2:
+          categoria += c;
+          break;
+      }
+
+      f.get(c);
+    }
+  }
+
+  this->Agregar(nombre, descripcion, categoria, 1);
+
+  pos = f.tellg();
+  f.get(c);
+
+  if(!f.eof()){
+    this->pSig->Cargar(pos);
+    f.close();
+  }
+
+}
+void CPelicula::Guardar(){
+
+  ofstream f("pelis.txt", ofstream::app);
+
+  if(!f.is_open()){
+    cout<<"Imposible abrir un archivo para cargar.";
+    return;
+  }
+
+}
+
+//Series
+
+void CSerie::Cargar(int pos){
+  ifstream f("series.txt");
+
+  if(!f.is_open()){
+    cout<<"Imposible abrir un archivo para cargar.";
+    return;
+  }
+
+  f.seekg(pos, f.beg);
+
+  char c;
+  string nombre, descripcion, categoria;
+  int tam;
+
+  f.get(c);
+
+  if(f.eof()){
+    system("pause");
+    f.close();
+    return;
+  }
+
+  f.unget();
+
+  for(int i=0; i<3; i++){         //Un for para cambiar entre los tres atributos
+
+    f.get(c);                 //Lee el caracter de tamano y lo interpreta como numero
+    tam = c;
+
+    for(int j=0; j<tam; j++){      //Desde cero, hasta el tamano indicado....
+
+      f.get(c);                   //Obtiene caracteres, y los va almacenando en el atributo correspondiente
+
+      if(i == 0)
+        nombre += c;
+
+      if(i == 1)
+        descripcion += c;
+
+      if(i == 2)
+        categoria += c;
+
+    }
+  }
+
+  this->Agregar(nombre, descripcion, categoria, 2);
+
+  pos = f.tellg();
+  f.get(c);
+
+  if(!f.eof()){
+    this->pSig->Cargar(pos);
+    f.close();
+  }
+
+}
+
+//Usuarios
+
 //Lista
 
-void Lista::CargarPeliculas(){
-
-  FILE* f;
-
-  if ((f=fopen("pelis.txt","r"))==NULL){
-         cout<<"Imposible abrir un archivo para cargar.";
-         return;
-  }
-
-  char c;
-  string nombre, descripcion, categoria;
-  int atr = 0;
-
-  c = fgetc(f);
-
-  while(!feof(f)){
-
-    ungetc(c, f);
-
-    nombre.clear();
-    descripcion.clear();
-    categoria.clear();
-
-    while(c != '*'){
-      c = fgetc(f);
-      while( c != '|' && c != '*'){
-
-        if(atr == 0)
-          nombre += c;
-
-        if(atr == 1)
-          descripcion += c;
-
-        if(atr == 2)
-          categoria += c;
-
-        c = fgetc(f);
-      }
-      atr++;
-    }
-
-    atr = 0;
-    this->Inicio.Agregar(nombre, descripcion, categoria);
-    c = fgetc(f);
-
-  }
-
-  fclose(f);
-  return;
-}
-void Lista::CargarSeries(){
-
-  FILE* f;
-
-  if ((f=fopen("series.txt","r"))==NULL){
-         cout<<"Imposible abrir un archivo para cargar.";  //Abre el archivo y retorna si hay un error
-         return;
-  }
-
-  char c;
-  int tam;
-  string nombre, descripcion, categoria;
-
-  c = fgetc(f);
-
-  while(!feof(f)){   //Mientras no sea el fin del archivo...
-
-    ungetc(c, f);
-
-    nombre.clear();
-    descripcion.clear();            //Limpia las cadenas para recibir nuevas
-    categoria.clear();
-
-    for(int i=0; i<3; i++){         //Un for para cambiar entre los tres atributos
-
-      c = fgetc(f);                 //Lee el caracter de tamano y lo interpreta como numero
-      tam = c;
-
-      for(int j=0; j<tam; j++){      //Desde cero, hasta el tamano indicado....
-
-        c = fgetc(f);                   //Obtiene caracteres, y los va almacenando en el atributo correspondiente
-
-        if(i == 0)
-          nombre += c;
-
-        if(i == 1)
-          descripcion += c;
-
-        if(i == 2)
-          categoria += c;
-
-      }
-    }
-
-    this->Inicio.Agregar(nombre, descripcion, categoria);  //Crea un nuevo nodo con los datos cargados
-    c = fgetc(f);
-
-  }
-
-  fclose(f);
-
-  return;
-}
 void Lista::GuardarPeliculas(){
   FILE *f;
 
@@ -410,7 +456,7 @@ void Lista::GuardarPeliculas(){
          return;
   }
 
-  Nodo* aux = &(this->Inicio);
+  Nodo* aux = this->Inicio;
   string nombre, descripcion, categoria;
   const char* pNombre, *pDescripcion, *pCategoria;
 
@@ -445,7 +491,7 @@ void Lista::GuardarSeries(){
          return;
   }
 
-  Nodo* aux = &(this->Inicio);
+  Nodo* aux = this->Inicio;
   string nombre, descripcion, categoria, lNombre, lDescripcion, lCategoria;
   char n, d, c;
   const char* pNombre, *pDescripcion, *pCategoria;
@@ -482,7 +528,7 @@ void Lista::GuardarSeries(){
 
 bool Lista::IsEmpty(){
 
-  if(Inicio.pSig == NULL)
+  if(Inicio->pSig == NULL)
     return true;
 
   return false;
@@ -502,7 +548,7 @@ void Lista::Agregar(){
   fflush(stdin);
   getline(cin,categoria);
 
-  Inicio.Agregar(nombre, descripcion, categoria);
+  Inicio->Agregar(nombre, descripcion, categoria, Modo);
 
   return;
 }
@@ -513,7 +559,7 @@ void Lista::Imprimir(){
     return;
   }
 
-  Inicio.pSig->Imprimir(1);
+  Inicio->pSig->Imprimir(1);
 
 }
 void Lista::Buscar(string nombre){
@@ -523,7 +569,7 @@ void Lista::Buscar(string nombre){
     return;
   }
 
-  Inicio.Buscar(nombre);
+  Inicio->Buscar(nombre);
 
 }
 void Lista::Modificar(string nombre){
@@ -533,7 +579,7 @@ void Lista::Modificar(string nombre){
     return;
   }
 
-  Inicio.Modificar(nombre);
+  Inicio->Modificar(nombre);
 
 }
 void Lista::Eliminar(string nombre){
@@ -543,7 +589,7 @@ void Lista::Eliminar(string nombre){
     return;
   }
 
-  Inicio.Eliminar(nombre);
+  Inicio->Eliminar(nombre);
 
 }
 
@@ -552,12 +598,14 @@ Lista::Lista(int Modo){
   this->Modo = Modo;
 
   switch (Modo) {
-    case 0:
-      CargarPeliculas();
+    case 1:
+      this->Inicio = new CPelicula;
+      this->Inicio->Cargar(0);
       break;
 
-    case 1:
-      CargarSeries();
+    case 2:
+      this->Inicio = new CSerie;
+      this->Inicio->Cargar(0);
       break;
   }
 
@@ -565,11 +613,11 @@ Lista::Lista(int Modo){
 Lista::~Lista(){
 
   switch (this->Modo) {
-    case 0:
+    case 1:
       GuardarPeliculas();
       break;
 
-    case 1:
+    case 2:
       GuardarSeries();
       break;
   }
