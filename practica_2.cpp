@@ -37,8 +37,6 @@ private:
 
 
 public:
-  void GuardarPeliculas();
-  void GuardarSeries();
 
   bool IsEmpty();
 
@@ -68,6 +66,17 @@ class CSerie : public Nodo{
 
 protected:
   virtual void Cargar(int pos);
+  virtual void Guardar();
+
+};
+
+class CUsuario : public Nodo{
+
+  friend class Lista;
+
+protected:
+  virtual void Cargar(int pos);
+  virtual void Guardar();
 
 };
 
@@ -383,6 +392,33 @@ void CPelicula::Guardar(){
     return;
   }
 
+  string tnombre, tdescripcion, tcategoria;
+  const char* pNombre, *pDescripcion, *pCategoria;
+
+  if(this->pSig != NULL){
+
+    tnombre = this->pSig->nombre;
+    tdescripcion = this->pSig->descripcion;               // Copia los atributos en strings
+    tcategoria = this->pSig->categoria;
+
+    pNombre = tnombre.c_str();
+    pDescripcion = tdescripcion.c_str();                 // Guarda los datos
+    pCategoria = tcategoria.c_str();
+
+    f.write(pNombre, tnombre.length());
+    f.put('|');
+    f.write(pDescripcion, tdescripcion.length());
+    f.put('|');
+    f.write(pCategoria, tcategoria.length());
+    f.put('*');
+
+    f.close();
+
+    this->pSig->Guardar();
+
+  }
+  return;
+
 }
 
 //Series
@@ -443,88 +479,51 @@ void CSerie::Cargar(int pos){
   }
 
 }
+void CSerie::Guardar(){
 
-//Usuarios
+  ofstream f("series.txt", ofstream::app);
 
-//Lista
-
-void Lista::GuardarPeliculas(){
-  FILE *f;
-
-  if ((f=fopen("pelis.txt","w+"))==NULL){
-         cout<<"Imposible abrir un archivo para guardar.";  // abre un archivo y retorna si hay un error
-         return;
+  if(!f.is_open()){
+    cout<<"Imposible abrir un archivo para cargar.";
+    return;
   }
 
-  Nodo* aux = this->Inicio;
-  string nombre, descripcion, categoria;
-  const char* pNombre, *pDescripcion, *pCategoria;
-
-  while(aux->pSig != NULL){
-
-    nombre = aux->pSig->nombre;
-    descripcion = aux->pSig->descripcion;               // Copia los atributos en strings
-    categoria = aux->pSig->categoria;
-
-    pNombre = nombre.c_str();
-    pDescripcion = descripcion.c_str();                 // Guarda los datos
-    pCategoria = categoria.c_str();
-
-    fputs(pNombre, f);
-    fputc('|', f);
-    fputs(pDescripcion, f);
-    fputc('|', f);
-    fputs(pCategoria, f);
-    fputc('*', f);
-
-    aux = aux->pSig;
-
-  }
-
-  fclose(f);
-  return;
-}
-void Lista::GuardarSeries(){
-  FILE *f;
-  if ((f=fopen("series.txt","w+"))==NULL){
-         cout<<"Imposible abrir un archivo para guardar.";  //Abre el archivo y retorna si hay un error
-         return;
-  }
-
-  Nodo* aux = this->Inicio;
-  string nombre, descripcion, categoria, lNombre, lDescripcion, lCategoria;
+  string tnombre, tdescripcion, tcategoria, lNombre, lDescripcion, lCategoria;
   char n, d, c;
   const char* pNombre, *pDescripcion, *pCategoria;
 
-  while(aux->pSig != NULL){
+  if(this->pSig != NULL){
 
-    nombre = aux->pSig->nombre;
-    descripcion = aux->pSig->descripcion;  //Guarda los atributos en strings
-    categoria = aux->pSig->categoria;
+    tnombre = this->pSig->nombre;
+    tdescripcion = this->pSig->descripcion;  //Guarda los atributos en strings
+    tcategoria = this->pSig->categoria;
 
-    n = nombre.length();
-    d = descripcion.length();              //Guarda el tamano de los strings como un caracter
-    c = categoria.length();
+    n = tnombre.length();
+    d = tdescripcion.length();              //Guarda el tamano de los strings como un caracter
+    c = tcategoria.length();
 
-    lNombre = n + nombre;
-    lDescripcion = d + descripcion;        //Junta tamano con su respectiva cadena
-    lCategoria = c + categoria;
+    lNombre = n + tnombre;
+    lDescripcion = d + tdescripcion;        //Junta tamano con su respectiva cadena
+    lCategoria = c + tcategoria;
 
     pNombre = lNombre.c_str();
     pDescripcion = lDescripcion.c_str();   //Convierte cada una en una cadena constante, para usar fputs
     pCategoria = lCategoria.c_str();
 
-    fputs(pNombre, f);
-    fputs(pDescripcion, f);                 //Guarda los datos en el archivo
-    fputs(pCategoria, f);
+    f.write(pNombre, lNombre.length());
+    f.write(pDescripcion, lDescripcion.length());                 //Guarda los datos en el archivo
+    f.write(pCategoria, lCategoria.length());
 
-    aux = aux->pSig;                        //Avanza al siguiente nodo
+    this->pSig->Guardar();
 
   }
-
-  fclose(f);
   return;
+
 }
+
+//Usuarios
+
+//Lista
 
 bool Lista::IsEmpty(){
 
@@ -614,12 +613,14 @@ Lista::~Lista(){
 
   switch (this->Modo) {
     case 1:
-      GuardarPeliculas();
+      ofstream("pelis.txt", ofstream::trunc);
       break;
 
     case 2:
-      GuardarSeries();
+      ofstream("series.txt", ofstream::trunc);
       break;
   }
+
+  Inicio->Guardar();
 
 }
