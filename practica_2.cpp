@@ -234,6 +234,10 @@ void Nodo::Agregar(string nombre, string descripcion, string categoria, int modo
         this->pSig = new CSerie;
         break;
 
+      case 3:
+        this->pSig = new CUsuario;
+        break;
+
     }
     this->pSig->Set(nombre, descripcion, categoria);
 
@@ -384,9 +388,10 @@ void CPelicula::Cargar(int pos){
   f.get(c);
 
   if(!f.eof()){
-    this->pSig->Cargar(pos);
     f.close();
+    this->pSig->Cargar(pos);
   }
+  f.close();
 
 }
 void CPelicula::Guardar(){
@@ -446,7 +451,6 @@ void CSerie::Cargar(int pos){
   f.get(c);
 
   if(f.eof()){
-    system("pause");
     f.close();
     return;
   }
@@ -480,9 +484,10 @@ void CSerie::Cargar(int pos){
   f.get(c);
 
   if(!f.eof()){
-    this->pSig->Cargar(pos);
     f.close();
+    this->pSig->Cargar(pos);
   }
+  f.close();
 
 }
 void CSerie::Guardar(){
@@ -519,6 +524,8 @@ void CSerie::Guardar(){
     f.write(pNombre, lNombre.length());
     f.write(pDescripcion, lDescripcion.length());                 //Guarda los datos en el archivo
     f.write(pCategoria, lCategoria.length());
+
+    f.close();
 
     this->pSig->Guardar();
 
