@@ -699,7 +699,6 @@ Lista::Lista(int Modo){
   switch (Modo) {
     case 1:
       this->Inicio = new CPelicula;
-      this->Inicio->Cargar(0);
       break;
 
     case 2:
@@ -716,20 +715,23 @@ Lista::Lista(int Modo){
 }
 Lista::~Lista(){
 
+  ofstream f;
+
   switch (this->Modo) {
     case 1:
-      ofstream("pelis.txt", ofstream::trunc);
+       f.open("pelis.txt", ofstream::trunc);
       break;
 
     case 2:
-      ofstream("series.txt", ofstream::trunc);
+      f.open("series.txt", ofstream::trunc);
       break;
 
     case 3:
-      ofstream("usuarios.txt", ofstream::trunc);
+      f.open("usuarios.txt", ofstream::trunc);
       break;
   }
 
+  f.close();
   Inicio->Guardar();
 
 }
