@@ -92,6 +92,7 @@ int main(){
 
   Lista Peliculas(1);
   Lista Series(2);
+  Lista Usuarios(3);
   Lista* lista;
 
     do{
@@ -100,7 +101,8 @@ int main(){
       cout<<"\n\n\t\t\t\t---------------------MENU----------------------\n\n";
       cout << "\n1. Peliculas";
       cout << "\n2. Series";
-      cout << "\n3. Salir";
+      cout << "\n3. Usuarios";
+      cout << "\n4. Salir";
 
       cout<<"\nOpcion: ";
       fflush(stdin);
@@ -119,6 +121,10 @@ int main(){
           break;
 
         case 3:
+          lista = &Usuarios;
+          break;
+
+        case 4:
           salir = true;
           opc = 6;
           break;
@@ -523,6 +529,100 @@ void CSerie::Guardar(){
 
 //Usuarios
 
+void CUsuario::Cargar(int pos){
+
+  ifstream f("usuarios.txt");
+
+  if(!f.is_open()){
+    cout<<"Imposible abrir un archivo para cargar.";
+    return;
+  }
+
+  f.seekg(pos, f.beg);
+
+  char c;
+  string nombre, descripcion, categoria;
+
+  for(int i = 0; i<3; i++){
+    f.get(c);
+    for(int j; j<20; j++){
+
+      switch (i) {
+        case 0:
+          nombre += c;
+          break;
+
+        case 1:
+          descripcion += c;\
+          break;
+
+        case 2:
+          categoria += c;
+          break;
+      }
+
+      f.get(c);
+    }
+  }
+
+  this->Agregar(nombre, descripcion, categoria, 1);
+
+  pos = f.tellg();
+  f.get(c);
+
+  if(!f.eof()){
+    this->pSig->Cargar(pos);
+    f.close();
+  }
+
+}
+void CUsuario::Guardar(){
+
+  ofstream f("usuarios.txt", ofstream::app);
+
+  if(!f.is_open()){
+    cout<<"Imposible abrir un archivo para cargar.";
+    return;
+  }
+
+  string tnombre, tdescripcion, tcategoria;
+  const char* pNombre, *pDescripcion, *pCategoria;
+  int largo;
+
+  if(this->pSig != NULL){
+
+    tnombre = this->pSig->nombre;
+    tdescripcion = this->pSig->descripcion;               // Copia los atributos en strings
+    tcategoria = this->pSig->categoria;
+
+    pNombre = tnombre.c_str();
+    pDescripcion = tdescripcion.c_str();                 // Guarda los datos
+    pCategoria = tcategoria.c_str();
+
+    f.write(pNombre, tnombre.length());
+    largo = 20-tnombre.length();
+    for(largo; largo <= 20; largo++)
+      f.put(' ');
+
+    f.write(pDescripcion, tdescripcion.length());
+    largo = 20-tdescripcion.length();
+    for(largo; largo <= 20; largo++)
+      f.put(' ');
+
+    f.write(pCategoria, tcategoria.length());
+    largo = 20-tcategoria.length();
+    for(largo; largo <= 20; largo++)
+      f.put(' ');
+
+    f.close();
+
+    this->pSig->Guardar();
+
+  }
+  return;
+
+}
+
 //Lista
 
 bool Lista::IsEmpty(){
@@ -604,9 +704,14 @@ Lista::Lista(int Modo){
 
     case 2:
       this->Inicio = new CSerie;
-      this->Inicio->Cargar(0);
+      break;
+
+    case 3:
+      this->Inicio = new CUsuario;
       break;
   }
+
+  this->Inicio->Cargar(0);
 
 }
 Lista::~Lista(){
@@ -618,6 +723,10 @@ Lista::~Lista(){
 
     case 2:
       ofstream("series.txt", ofstream::trunc);
+      break;
+
+    case 3:
+      ofstream("usuarios.txt", ofstream::trunc);
       break;
   }
 
