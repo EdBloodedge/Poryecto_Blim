@@ -88,7 +88,7 @@ int main(){
   int modo;
 
   string nombre;
-  bool salir;
+  bool salir = false, subsalir;
 
   Lista Peliculas(1);
   Lista Series(2);
@@ -96,6 +96,8 @@ int main(){
   Lista* lista;
 
     do{
+
+      subsalir = false;
 
       system("cls");
       cout<<"\n\n\t\t\t\t---------------------MENU----------------------\n\n";
@@ -126,7 +128,7 @@ int main(){
 
         case 4:
           salir = true;
-          opc = 6;
+          subsalir = true;
           break;
 
         default:
@@ -134,7 +136,7 @@ int main(){
           system("pause");
       }
 
-      while(opc != 6){
+      while(!subsalir){
 
         system("cls");
 
@@ -188,6 +190,7 @@ int main(){
                   break;
 
               case 6:
+                subsalir = true;
                 break;
 
               default:
