@@ -363,6 +363,15 @@ void CPelicula::Cargar(int pos){
   char c;
   string nombre, descripcion, categoria;
 
+  f.get(c);
+
+  if(f.eof()){
+    f.close();
+    return;
+  }
+
+  f.unget();
+
   for(int i = 0; i<3; i++){
     f.get(c);
     while( c != '|' && c != '*'){
@@ -553,9 +562,18 @@ void CUsuario::Cargar(int pos){
   char c;
   string nombre, descripcion, categoria;
 
+  f.get(c);
+
+  if(f.eof()){
+    f.close();
+    return;
+  }
+
+  f.unget();
+
   for(int i = 0; i<3; i++){
     f.get(c);
-    for(int j; j<20; j++){
+    for(int j = 0; j<20; j++){
 
       switch (i) {
         case 0:
@@ -575,7 +593,7 @@ void CUsuario::Cargar(int pos){
     }
   }
 
-  this->Agregar(nombre, descripcion, categoria, 1);
+  this->Agregar(nombre, descripcion, categoria, 3);
 
   pos = f.tellg();
   f.get(c);
@@ -611,17 +629,17 @@ void CUsuario::Guardar(){
 
     f.write(pNombre, tnombre.length());
     largo = 20-tnombre.length();
-    for(largo; largo <= 20; largo++)
+    for(int j = 0; j <= largo; j++)
       f.put(' ');
 
     f.write(pDescripcion, tdescripcion.length());
     largo = 20-tdescripcion.length();
-    for(largo; largo <= 20; largo++)
+    for(int j = 0; j <= largo; j++)
       f.put(' ');
 
     f.write(pCategoria, tcategoria.length());
     largo = 20-tcategoria.length();
-    for(largo; largo <= 20; largo++)
+    for(int j = 0; j <= largo; j++)
       f.put(' ');
 
     f.close();
