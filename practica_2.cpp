@@ -14,13 +14,13 @@ public:
   Nodo* pSig;
   string nombre, descripcion, categoria;
 
-  void Set(string nombre, string descripcion, string categoria);
+  virtual void Set(string nombre, string descripcion, string categoria);
 
-  void Agregar(string nombre, string descripcion, string categoria, int modo);
-  void Imprimir(int Modo);
-  void Buscar(string nombre);
-  void Modificar(string nombre);
-  void Eliminar(string nombre);
+  virtual void Agregar(string nombre, string descripcion, string categoria, int modo);
+  virtual void Imprimir(int Modo);
+  virtual void Buscar(string nombre);
+  virtual void Modificar(string nombre);
+  virtual void Eliminar(string nombre);
 
   virtual void Cargar(int pos);
   virtual void Guardar();
@@ -28,6 +28,23 @@ public:
   Nodo();
 
 };
+
+/*class CContenido : public Nodo{
+
+public:
+
+  virtual void Set(string nombre, string descripcion, string categoria);
+
+  virtual void Agregar(string nombre, string descripcion, string categoria, int modo);
+  virtual void Imprimir(int Modo);
+  virtual void Buscar(string nombre);
+  virtual void Modificar(string nombre);
+  virtual void Eliminar(string nombre);
+
+  virtual void Cargar(int pos);
+  virtual void Guardar();
+
+};*/
 
 class Lista{
 
