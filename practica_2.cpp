@@ -567,32 +567,32 @@ void CSerie::Guardar(){
 
 void CUsuario::Cargar(int pos){
 
-  ifstream f("usuarios.txt");
+  ifstream f("usuarios.txt"); //se abre el archivo
 
   if(!f.is_open()){
     cout<<"Imposible abrir un archivo para cargar.";
     return;
   }
 
-  f.seekg(pos, f.beg);
+  f.seekg(pos, f.beg); //se busca la posicion en la que se quedo el anterior nodo
 
   char c;
   string nombre, descripcion, categoria;
 
-  f.get(c);
+  f.get(c); //se obtiene un caracter para checar si estamos en el fin del archivo
 
   if(f.eof()){
-    f.close();
+    f.close(); //Lo cierra si es que es asi
     return;
   }
 
-  f.unget();
+  f.unget();  //Regresa el caracter tomado, para iniciar bien el proceso
 
-  for(int i = 0; i<3; i++){
+  for(int i = 0; i<3; i++){ //Para cada uno de los tres campos..
     f.get(c);
-    for(int j = 0; j<20; j++){
+    for(int j = 0; j<20; j++){//Ya que los registros son de 20 espacios, durante 20 ciclos
 
-      switch (i) {
+      switch (i) { //Se agrega el caracter al campo correspondiente
         case 0:
           nombre += c;
           break;
@@ -606,18 +606,18 @@ void CUsuario::Cargar(int pos){
           break;
       }
 
-      f.get(c);
+      f.get(c); //Y se toma un caracter para continuar con el proceso
     }
   }
 
-  this->Agregar(nombre, descripcion, categoria, 3);
+  this->Agregar(nombre, descripcion, categoria, 3);  //Finalmente se agrega el nodo
 
-  pos = f.tellg();
-  f.get(c);
+  pos = f.tellg();      //Se toma la posicion en la que se quedo el archivo
+  f.get(c);             //Se busca si es fin de archivo
 
   if(!f.eof()){
-    this->pSig->Cargar(pos);
-    f.close();
+    this->pSig->Cargar(pos);  //Si no lo es, se avanza para cargar otro nodo
+    f.close();  //Y se cierra el archivo.
   }
 
 }
@@ -644,10 +644,10 @@ void CUsuario::Guardar(){
     pDescripcion = tdescripcion.c_str();                 // Guarda los datos
     pCategoria = tcategoria.c_str();
 
-    f.write(pNombre, tnombre.length());
-    largo = 20-tnombre.length();
+    f.write(pNombre, tnombre.length());                 //Se guarda el atributo
+    largo = 20-tnombre.length();                    //Se obtiene un 'largo' que es el espacio faltante para que el nodo consiga tener un espacio de 20
     for(int j = 0; j <= largo; j++)
-      f.put(' ');
+      f.put(' ');                       //Y se agrega un espacio en blanco por cada uno de estos espacios faltantes, asi el registro tiene siempre longitud fija de 20
 
     f.write(pDescripcion, tdescripcion.length());
     largo = 20-tdescripcion.length();
@@ -659,9 +659,9 @@ void CUsuario::Guardar(){
     for(int j = 0; j <= largo; j++)
       f.put(' ');
 
-    f.close();
+    f.close();              //Se cierra el archivo.
 
-    this->pSig->Guardar();
+    this->pSig->Guardar(); //Y se llama a guardar al nodo siguiente.
 
   }
   return;
